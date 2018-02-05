@@ -1,9 +1,12 @@
 <?php
 require_once ('BasicPaymentGateway.php');
 require_once ('BasicPaymentGateWayConst.php');
+require_once ('InputValidatorTrait.php');
 
 class FooBarGateWay implements BasicPaymentGateway
 {
+use InputValidatorTrait;
+
     protected $firstName;
     protected $lastName;
     protected $addressOne;
@@ -46,9 +49,10 @@ class FooBarGateWay implements BasicPaymentGateway
      * @param   string  First name on card.
      * @return  object  Chainable instance of self.
      */
-    public function setFirstName($name)
-    {
-        $this->firstName=$name;
+    public function setFirstName($name){
+        $this->checkStringOnly($name,1,14,'first name');
+        $this->firstName = $name;
+
         return $this;
     }
 
@@ -57,7 +61,7 @@ class FooBarGateWay implements BasicPaymentGateway
      * @return  object  Chainable instance of self.
      */
     public function setLastName($name)
-    {
+    {   $this->checkStringOnly($name,1,14,'last name');
         $this->lastName=$name;
         return $this;
     }
@@ -128,6 +132,7 @@ class FooBarGateWay implements BasicPaymentGateway
      */
     public function setCardNumber($number)
     {
+        $this->checkIfStringNumberOny($number,16,16,'card number');
         $this->cardNumber=$number;
         return $this;
     }
@@ -139,6 +144,8 @@ class FooBarGateWay implements BasicPaymentGateway
      */
     public function setExpirationDate($month, $year)
     {
+        $this->checkIfStringNumberOny($month,2,2,'month');
+        $this->checkIfStringNumberOny($year,4,4,'year');
         $this->expirationMonth=$month;
         $this->expirationYear=$year;
         return $this;
@@ -162,6 +169,8 @@ class FooBarGateWay implements BasicPaymentGateway
      */
     public function charge($amount, $currency = 'USD')
     {
+        $this->checkIfStringNumberOny($amount,1,PHP_INT_MAX,'amount');
+        $this->checkStringLength($currency,1,5,'currency');
         $post=$this->setPostData($amount,$currency);
         $response=$this->postChargeToApi($post);
         $this->updateTransactionLog($response);
@@ -247,7 +256,7 @@ class FooBarGateWay implements BasicPaymentGateway
             'date'=>(new\DateTime('now'))->format('Y-m-d H:i:s'),
             'success'=>!$error,
             'errors'=>$error?$data['error']:[],
-            'transaction_id'=>$error?$data['error']['charge']:$data['id']
+            'transaction_id'=>$error?null:$data['id']
             ];
         $this->transactionLog['transactionCtr']+=1;
         $this->errors=$this->transactionLog[$transactionCtr]['errors'];

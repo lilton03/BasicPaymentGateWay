@@ -9,7 +9,7 @@ $gw = new FooBarGateway('sk_test_lBzwJ4lQzQvEPZwgl3s59Mal');
     ->setCity('Morristown')->setProvince('TN')
     ->setPostal('37814')
     ->setCountry('US')
-    ->setCardNumber('4007000000027')
+    ->setCardNumber('4242424242424242')
     ->setExpirationDate('10', '2019')
      ->setCvv('123');
 
@@ -23,7 +23,7 @@ $gw = new FooBarGateway('sk_test_lBzwJ4lQzQvEPZwgl3s59Mal');
 
     /*additional tests to show transaction logs*/
 
-    /*
+
     echo nl2br("\n\n");
     $transactionLog = $gw->getTransactionLog();
     for($i=$transactionLog['transactionCtr']-1;$i>=0;$i--){
@@ -45,5 +45,5 @@ $gw = new FooBarGateway('sk_test_lBzwJ4lQzQvEPZwgl3s59Mal');
         echo nl2br("\n");
 
     }
-    */
+
 ?>
